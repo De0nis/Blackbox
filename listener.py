@@ -64,15 +64,19 @@ def mouse_scroll(x, y, dx, dy):
 
 
 #getting active APP
-def get_active_app():
-    global active_app
-    pid = wintypes.DWORD().value
+ pid = wintypes.DWORD()
+    active = ctypes.windll.user32.GetForegroundWindow()
+    active_window = ctypes.windll.user32.GetWindowThreadProcessId(active, ctypes.byref(pid))
+    pid = pid.value
     for item in psutil.process_iter():
         if pid == item.pid:
-            active_app2 = item.name() + "%" + str(gw.getActiveWindowTitle()).rsplit(":")[0]
-            if (str(active_app)) != (str(active_app2)):
-                active_app = active_app2
-                return active_app2
+            global active_app
+            if active_app != item.name():
+                active_window_title = gw.getActiveWindowTitle()
+                active_app = item.name() +" "+ gw.getActiveWindowTitle()
+                active_app = item.name()
+                print(str(active_window_title).rsplit(":")[0])
+                return active_app
             else:
                 return None
 
